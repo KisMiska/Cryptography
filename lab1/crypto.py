@@ -35,8 +35,17 @@ def decrypt_caesar(ciphertext):
 
     Add more implementation details here.
     """
-    raise NotImplementedError  # Your implementation here
-
+    plaintext = []
+    for char in ciphertext:
+        if char.isalpha():
+            new = ord(char) - ord('A')
+            new = (new - 3) % 26
+            plaintext.append(chr(new + ord('A')))
+        else:
+            plaintext.append(char)
+            
+    return ''.join(plaintext)
+    
 
 # Vigenere Cipher
 
