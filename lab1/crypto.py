@@ -18,7 +18,16 @@ def encrypt_caesar(plaintext):
 
     Add more implementation details here.
     """
-    raise NotImplementedError  # Your implementation here
+    ciphertext = []
+    for char in plaintext:
+        if char.isalpha():
+            new = ord(char) - ord('A')
+            new = (new + 3) % 26
+            ciphertext.append(chr(new + ord('A')))
+        else:
+            ciphertext.append(char)
+        
+    return ''.join(ciphertext)
 
 
 def decrypt_caesar(ciphertext):
