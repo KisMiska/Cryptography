@@ -54,7 +54,15 @@ def encrypt_vigenere(plaintext, keyword):
 
     Add more implementation details here.
     """
-    raise NotImplementedError  # Your implementation here
+    ciphertext = []
+    len_keyw = len(keyword)
+    
+    for i, char in enumerate(plaintext):
+        shift = ord(keyword[i % len_keyw]) - ord('A')
+        new = (ord(char) - ord('A') + shift) % 26
+        ciphertext.append(chr(new + ord('A')))
+    
+    return ''.join(ciphertext)
 
 
 def decrypt_vigenere(ciphertext, keyword):
@@ -62,7 +70,16 @@ def decrypt_vigenere(ciphertext, keyword):
 
     Add more implementation details here.
     """
-    raise NotImplementedError  # Your implementation here
+    plaintext = []
+    len_keyw = len(keyword)
+    
+    for i, char in enumerate(ciphertext):
+        shift = ord(keyword[i % len_keyw]) - ord('A')
+        new = (ord(char) - ord('A') - shift) % 26
+        plaintext.append(chr(new + ord('A')))
+    
+    return ''.join(plaintext)
+    
 
 
 # Merkle-Hellman Knapsack Cryptosystem
