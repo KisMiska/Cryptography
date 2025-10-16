@@ -81,6 +81,47 @@ def decrypt_vigenere(ciphertext, keyword):
     return ''.join(plaintext)
     
 
+# Scytale Cipher
+
+def encrypt_scytale(plaintext, circumference):
+    """Encrypt plaintext using a Scytale cipher"""
+    
+    if circumference <= 0:
+        raise ValueError("Circumference must be positive")
+    
+    length = len(plaintext)
+    num_cols = (length + circumference - 1) // circumference
+    padded_length = num_cols * circumference
+    plaintext = plaintext + ' ' * (padded_length - length)
+    
+    ciphertext = []
+    for row in range(circumference):
+        for col in range(num_cols):
+            index = col * circumference + row
+            if index < len(plaintext):
+                ciphertext.append(plaintext[index])
+    
+    return ''.join(ciphertext)
+
+
+def decrypt_scytale(ciphertext, circumference):
+    """Decrypt ciphertext using a Scytale cipher"""
+    
+    if circumference <= 0:
+        raise ValueError("Circumference must be positive")
+    
+    length = len(ciphertext)
+    num_cols = (length + circumference - 1) // circumference
+    
+    result = []
+    for col in range(num_cols):
+        for row in range(circumference):
+            index = row * num_cols + col
+            if index < length:
+                result.append(ciphertext[index])
+    
+    return ''.join(result).rstrip()
+
 
 # Merkle-Hellman Knapsack Cryptosystem
 
