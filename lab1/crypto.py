@@ -122,6 +122,7 @@ def decrypt_scytale(ciphertext, circumference):
     
     return ''.join(result).rstrip()
 
+# Railfence cipher
 
 def encrypt_railfence(plaintext, num_rails):
     """Encrypt plaintext using a Railfence cipher"""

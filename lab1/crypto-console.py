@@ -8,9 +8,12 @@ by the crypto module.
 If you are a student, you shouldn't need to change anything in this file.
 """
 import random
+import sys
 
 from crypto import (encrypt_caesar, decrypt_caesar,
                     encrypt_vigenere, decrypt_vigenere,
+                    encrypt_scytale, decrypt_scytale,
+                    encrypt_railfence, decrypt_railfence,
                     generate_private_key, create_public_key,
                     encrypt_mh, decrypt_mh)
 
@@ -21,7 +24,7 @@ from crypto import (encrypt_caesar, decrypt_caesar,
 
 def get_tool():
     print("* Tool *")
-    return _get_selection("(C)aesar, (V)igenere or (M)erkle-Hellman? ", "CVM")
+    return _get_selection("(C)aesar, (V)igenere, (S)cytale, (R)ailfence or (M)erkle-Hellman? ", "CVSRM")
 
 
 def get_action():
@@ -31,9 +34,9 @@ def get_action():
 
 
 def get_filename():
-    filename = input("Filename? ")
+    filename = input("Filename? ").strip()
     while not filename:
-        filename = input("Filename? ")
+        filename = input("Filename? ").strip()
     return filename
 
 
@@ -52,9 +55,23 @@ def get_input(binary=False):
         flags = 'r'
         if binary:
             flags += 'b'
-        with open(filename, flags) as infile:
-            return infile.read()
+        try:
+            with open(filename, flags) as infile:
+                return infile.read()
+        except FileNotFoundError:
+            print(f"Error: File '{filename}' not found.")
+            sys.exit(1)
 
+def get_positive_integer(prompt):
+    while True:
+        try:
+            value = int(input(prompt))
+            if value <= 0:
+                print("Please enter a positive integer.")
+                continue
+            return value
+        except ValueError:
+            print("Invalid input. Please enter a positive integer.")
 
 def set_output(output, binary=False):
     print("* Output *")
@@ -130,6 +147,32 @@ def run_vigenere():
 
     set_output(output)
 
+def run_scytale():
+    action = get_action()
+    encrypting = action == 'E'
+    data = get_input(binary=False)
+
+    print("* Transform *")
+    circumference = get_positive_integer("Circumference? ")
+
+    print(f"{'En' if encrypting else 'De'}crypting using Scytale cipher with circumference {circumference}...")
+
+    output = (encrypt_scytale if encrypting else decrypt_scytale)(data, circumference)
+    set_output(output)
+
+def run_railfence():
+    action = get_action()
+    encrypting = action == 'E'
+    data = get_input(binary=False)
+
+    print("* Transform *")
+    num_rails = get_positive_integer("Number of rails? ")
+
+    print(f"{'En' if encrypting else 'De'}crypting using Railfence cipher with {num_rails} rails...")
+
+    output = (encrypt_railfence if encrypting else decrypt_railfence)(data, num_rails)
+    set_output(output)
+
 
 def run_merkle_hellman():
     action = get_action()
@@ -175,7 +218,9 @@ def run_suite():
     commands = {
         'C': run_caesar,         # Caesar Cipher
         'V': run_vigenere,       # Vigenere Cipher
-        'M': run_merkle_hellman  # Merkle-Hellman Knapsack Cryptosystem
+        'M': run_merkle_hellman,  # Merkle-Hellman Knapsack Cryptosystem
+        'S': run_scytale,
+        'R': run_railfence,
     }
     commands[tool]()
 
