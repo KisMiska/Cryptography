@@ -18,16 +18,25 @@ def encrypt_caesar(plaintext):
 
     Add more implementation details here.
     """
-    ciphertext = []
-    for char in plaintext:
-        if char.isalpha():
-            new = ord(char) - ord('A')
-            new = (new + 3) % 26
-            ciphertext.append(chr(new + ord('A')))
+    
+    if isinstance(plaintext, str):
+        plaintext = plaintext.encode('utf-8')
+    
+    ciphertext = bytearray()
+    for byte in plaintext:
+        if isinstance(plaintext, str):
+            # Text mode
+            if chr(byte).isalpha():
+                char = chr(byte).upper()
+                new = (ord(char) - ord('A') + 3) % 26
+                ciphertext.append(ord(chr(new + ord('A'))))
+            else:
+                ciphertext.append(byte)
         else:
-            ciphertext.append(char)
-        
-    return ''.join(ciphertext)
+            # Binary mode
+            ciphertext.append((byte + 3) % 256)
+    
+    return bytes(ciphertext)
 
 
 def decrypt_caesar(ciphertext):
@@ -35,16 +44,15 @@ def decrypt_caesar(ciphertext):
 
     Add more implementation details here.
     """
-    plaintext = []
-    for char in ciphertext:
-        if char.isalpha():
-            new = ord(char) - ord('A')
-            new = (new - 3) % 26
-            plaintext.append(chr(new + ord('A')))
-        else:
-            plaintext.append(char)
-            
-    return ''.join(plaintext)
+    
+    if isinstance(ciphertext, str):
+        ciphertext = ciphertext.encode('utf-8')
+    
+    plaintext = bytearray()
+    for byte in ciphertext:
+        plaintext.append((byte - 3) % 256)
+    
+    return bytes(plaintext)
     
 
 # Vigenere Cipher
