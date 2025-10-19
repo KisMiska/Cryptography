@@ -19,8 +19,16 @@ def encrypt_caesar(plaintext):
     Add more implementation details here.
     """
     
+    if not isinstance(plaintext, (str, bytes)):
+        raise TypeError(f"Expected str or bytes")
+    
     if isinstance(plaintext, str):
+        if not plaintext:
+            raise ValueError("Input cannot be empty")
         plaintext = plaintext.encode('utf-8')
+    
+    if len(plaintext) == 0:
+        raise ValueError("Input cannot be empty")
     
     ciphertext = bytearray()
     for byte in plaintext:
@@ -45,8 +53,16 @@ def decrypt_caesar(ciphertext):
     Add more implementation details here.
     """
     
+    if not isinstance(ciphertext, (str, bytes)):
+        raise TypeError(f"Expected str or bytes")
+    
     if isinstance(ciphertext, str):
+        if not ciphertext:
+            raise ValueError("Inoput cannot be empty")
         ciphertext = ciphertext.encode('utf-8')
+    
+    if len(ciphertext) == 0:
+        raise ValueError("Input cannot be empty")
     
     plaintext = bytearray()
     for byte in ciphertext:
@@ -62,6 +78,22 @@ def encrypt_vigenere(plaintext, keyword):
 
     Add more implementation details here.
     """
+    
+    if not isinstance(plaintext, str):
+        raise TypeError(f"Plaintext must be str")
+    if not isinstance(keyword, str):
+        raise TypeError(f"Keyword must be str")
+    
+    if not plaintext:
+        raise ValueError("Plaintext cannot be empty")
+    if not keyword:
+        raise ValueError("Keyword cannot be empty")
+    
+    if not plaintext.isalpha():
+        raise ValueError("Plaintext must contain only alphabetic characters")
+    if not keyword.isalpha():
+        raise ValueError("Keyword must contain only alphabetic characters")
+    
     ciphertext = []
     len_keyw = len(keyword)
     
@@ -78,6 +110,22 @@ def decrypt_vigenere(ciphertext, keyword):
 
     Add more implementation details here.
     """
+    
+    if not isinstance(ciphertext, str):
+        raise TypeError(f"Ciphertext must be str")
+    if not isinstance(keyword, str):
+        raise TypeError(f"Keyword must be str")
+    
+    if not ciphertext:
+        raise ValueError("Ciphertext cannot be empty")
+    if not keyword:
+        raise ValueError("Keyword cannot be empty")
+    
+    if not ciphertext.isalpha():
+        raise ValueError("Ciphertext must contain only alphabetic characters")
+    if not keyword.isalpha():
+        raise ValueError("Keyword must contain only alphabetic characters")
+    
     plaintext = []
     len_keyw = len(keyword)
     
@@ -94,6 +142,13 @@ def decrypt_vigenere(ciphertext, keyword):
 def encrypt_scytale(plaintext, circumference):
     """Encrypt plaintext using a Scytale cipher"""
     
+    if not isinstance(plaintext, str):
+        raise TypeError(f"Plaintext must be str")
+    if not isinstance(circumference, int):
+        raise TypeError(f"Circumference must be int")
+    
+    if not plaintext:
+        raise ValueError("Plaintext cannot be empty")
     if circumference <= 0:
         raise ValueError("Circumference must be positive")
     
@@ -115,8 +170,16 @@ def encrypt_scytale(plaintext, circumference):
 def decrypt_scytale(ciphertext, circumference):
     """Decrypt ciphertext using a Scytale cipher"""
     
+    if not isinstance(ciphertext, str):
+        raise TypeError(f"Ciphertext must be str")
+    if not isinstance(circumference, int):
+        raise TypeError(f"Circumference must be int")
+    
+    if not ciphertext:
+        raise ValueError("Ciphertext cannot be empty")
     if circumference <= 0:
         raise ValueError("Circumference must be positive")
+    
     
     length = len(ciphertext)
     num_cols = (length + circumference - 1) // circumference
@@ -135,7 +198,17 @@ def decrypt_scytale(ciphertext, circumference):
 def encrypt_railfence(plaintext, num_rails):
     """Encrypt plaintext using a Railfence cipher"""
     
-    if num_rails <= 1:
+    if not isinstance(plaintext, str):
+        raise TypeError(f"Plaintext must be str")
+    if not isinstance(num_rails, int):
+        raise TypeError(f"Number of rails must be int")
+    
+    if not plaintext:
+        raise ValueError("Plaintext cannot be empty")
+    if num_rails <= 0:
+        raise ValueError("Number of rails must be positive")
+    
+    if num_rails == 1:
         return plaintext
     
     rails = [[] for _ in range(num_rails)]
@@ -154,7 +227,17 @@ def encrypt_railfence(plaintext, num_rails):
 def decrypt_railfence(ciphertext, num_rails):
     """Decrypt ciphertext using a Railfence cipher"""
     
-    if num_rails <= 1:
+    if not isinstance(ciphertext, str):
+        raise TypeError(f"Ciphertext must be str")
+    if not isinstance(num_rails, int):
+        raise TypeError(f"Number of rails must be int")
+    
+    if not ciphertext:
+        raise ValueError("Ciphertext cannot be empty")
+    if num_rails <= 0:
+        raise ValueError("Number of rails must be positive")
+
+    if num_rails == 1:
         return ciphertext
 
     rail_lengths = [0] * num_rails

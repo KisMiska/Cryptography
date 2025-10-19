@@ -28,6 +28,30 @@ class TestCaesarCipher:
     def test6(self):
         assert decrypt_caesar(b"D") == b"A"
         
+    def test7(self):
+        with pytest.raises(TypeError):
+            encrypt_caesar(None)
+            
+    def test8(self):
+        with pytest.raises(TypeError):
+            encrypt_caesar(123)
+            
+    def test9(self):
+        with pytest.raises(ValueError):
+            encrypt_caesar("")
+            
+    def test10(self):
+        with pytest.raises(TypeError):
+            decrypt_caesar(None)
+    
+    def test11(self):
+        with pytest.raises(TypeError):
+            decrypt_caesar(123)
+    
+    def test12(self):
+        with pytest.raises(ValueError):
+            decrypt_caesar("")
+        
     
 class TestVigenereCipher:
     
@@ -60,6 +84,50 @@ class TestVigenereCipher:
     
     def test8(self):
         assert encrypt_vigenere("Z", "Z") == "Y" 
+        
+    def test9(self):
+        with pytest.raises(TypeError):
+            encrypt_vigenere(None, "KHJGKJH")
+            
+    def test10(self):
+        with pytest.raises(TypeError):
+             encrypt_vigenere("JGHYJH", 123)
+            
+    def test11(self):
+        with pytest.raises(ValueError):
+            encrypt_vigenere("", "LKHGJ")
+    
+    def test13(self):
+        with pytest.raises(ValueError):
+            encrypt_vigenere("KEGHFVY", "")
+    
+    def test14(self):
+        with pytest.raises(ValueError):
+            encrypt_vigenere("KJHG", "")
+            
+    def test15(self):
+        with pytest.raises(ValueError):
+            encrypt_vigenere("KJHG HJKG", "HGJG")
+            
+    def test16(self):
+        with pytest.raises(ValueError):
+            encrypt_vigenere("KJHG123", "HGJG")
+            
+    def test17(self):
+        with pytest.raises(TypeError):
+            decrypt_vigenere("LXFOPVEFRNHR", None)
+    
+    def test18(self):
+        with pytest.raises(ValueError):
+            decrypt_vigenere("", "HKJG")
+    
+    def test19(self):
+        with pytest.raises(ValueError):
+            decrypt_vigenere("LXFOPVEFRNHR", "")
+    
+    def test20(self):
+        with pytest.raises(ValueError):
+            decrypt_vigenere("HELLO!", "LJKH")
         
 
 class TestScytaleCipher:
@@ -101,6 +169,59 @@ class TestScytaleCipher:
         encrypted = encrypt_scytale(plaintext, circumference)
         decrypted = decrypt_scytale(encrypted, circumference)
         assert decrypted == plaintext
+        
+    def test8(self):
+        with pytest.raises(TypeError):
+            encrypt_scytale(None, 5)
+    
+    def test9(self):
+        with pytest.raises(TypeError):
+            encrypt_scytale("KHJGK", None)
+    
+    def test10(self):
+        with pytest.raises(TypeError):
+            encrypt_scytale(123, 5)
+    
+    def test11(self):
+        with pytest.raises(TypeError):
+            encrypt_scytale("LKJGH", "str")
+    
+    def test12(self):
+        with pytest.raises(TypeError):
+            encrypt_scytale("LKHJG", 5.5)
+    
+    def test13(self):
+        with pytest.raises(ValueError):
+            encrypt_scytale("", 5)
+    
+    def test14(self):
+        with pytest.raises(ValueError):
+            encrypt_scytale("JYTVR", 0)
+    
+    def test15(self):
+        with pytest.raises(ValueError):
+            encrypt_scytale("KUYBT", -5)
+    
+    def test16(self):
+        with pytest.raises(TypeError):
+            decrypt_scytale(None, 5)
+    
+    def test17(self):
+        with pytest.raises(TypeError):
+            decrypt_scytale("FDSSD", None)
+    
+    def test18(self):
+        with pytest.raises(ValueError):
+            decrypt_scytale("", 5)
+    
+    def test19(self):
+        with pytest.raises(ValueError):
+            decrypt_scytale("FDSDFFFGGF", 0)
+    
+    def test20(self):
+        with pytest.raises(ValueError):
+            decrypt_scytale("LIUHY", -5)
+
         
 
 class TestRailfenceCipher:
@@ -148,3 +269,51 @@ class TestRailfenceCipher:
         encrypted = encrypt_railfence(plaintext, 3)
         decrypted = decrypt_railfence(encrypted, 3)
         assert decrypted == plaintext
+        
+    def test8(self):
+        with pytest.raises(TypeError):
+            encrypt_railfence(None, 3)
+    
+    def test9(self):
+        with pytest.raises(TypeError):
+            encrypt_railfence("KLIUHG", None)
+    
+    def test10(self):
+        with pytest.raises(TypeError):
+            encrypt_railfence(123, 3)
+    
+    def test11(self):
+        with pytest.raises(TypeError):
+            encrypt_railfence("REWRWE", "str")
+    
+    def test12(self):
+        with pytest.raises(ValueError):
+            encrypt_railfence("", 3)
+    
+    def test13(self):
+        with pytest.raises(ValueError):
+            encrypt_railfence("HETRWETWELLO", 0)
+    
+    def test14(self):
+        with pytest.raises(ValueError):
+            encrypt_railfence("HEFDSREWRLLO", -3)
+    
+    def test15(self):
+        with pytest.raises(TypeError):
+            decrypt_railfence(None, 3)
+    
+    def test16(self):
+        with pytest.raises(TypeError):
+            decrypt_railfence("FDSF", None)
+    
+    def test17(self):
+        with pytest.raises(ValueError):
+            decrypt_railfence("", 3)
+    
+    def test18(self):
+        with pytest.raises(ValueError):
+            decrypt_railfence("FSDF", 0)
+    
+    def test19(self):
+        with pytest.raises(ValueError):
+            decrypt_railfence("KJHG", -3)
