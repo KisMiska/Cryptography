@@ -112,28 +112,32 @@ def decrypt_vigenere(ciphertext, keyword):
     """
     
     if not isinstance(ciphertext, str):
-        raise TypeError(f"Ciphertext must be str")
+        raise TypeError("Ciphertext must be str")
     if not isinstance(keyword, str):
-        raise TypeError(f"Keyword must be str")
-    
+        raise TypeError("Keyword must be str")
+
     if not ciphertext:
         raise ValueError("Ciphertext cannot be empty")
     if not keyword:
         raise ValueError("Keyword cannot be empty")
-    
-    if not ciphertext.isalpha():
-        raise ValueError("Ciphertext must contain only alphabetic characters")
+
     if not keyword.isalpha():
         raise ValueError("Keyword must contain only alphabetic characters")
-    
+
     plaintext = []
     len_keyw = len(keyword)
-    
-    for i, char in enumerate(ciphertext):
-        shift = ord(keyword[i % len_keyw]) - ord('A')
-        new = (ord(char) - ord('A') - shift) % 26
-        plaintext.append(chr(new + ord('A')))
-    
+    key_index = 0
+
+    for char in ciphertext:
+        if char.isalpha():
+            base = ord('A') if char.isupper() else ord('a')
+            shift = (ord(keyword[key_index % len_keyw].upper()) - ord('A')) % 26
+            new = (ord(char.upper()) - ord('A') - shift) % 26
+            plaintext.append(chr(new + base))
+            key_index += 1
+        else:
+            plaintext.append(char)
+
     return ''.join(plaintext)
     
 
