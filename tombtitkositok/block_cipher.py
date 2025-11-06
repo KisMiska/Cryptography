@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 
 
 class PaddingMode:
@@ -46,5 +47,41 @@ class PaddingMode:
         return data
         
     
-
+class BlockCipherMode(ABC):
     
+    def __init__(self, block_size_bits, encrypt_function, decrypt_function, key, iv):
+        self.block_size = block_size_bits // 8
+        self.encrypt_func = encrypt_function
+        self.decrypt_func = decrypt_function
+        self.key = key
+        self.iv = iv
+        
+    @abstractmethod
+    def encrypt(self, plaintext):
+        pass
+    
+    @abstractmethod
+    def decrypt(self, ciphertext):
+        pass
+    
+    def xor_bytes(self, a, b):
+        return bytes(x ^ y for x, y in zip(a, b))
+    
+
+class ECBMode(BlockCipherMode):
+    """Electronic Codebook Mode"""
+    
+    def encrypt(self, plaintext):
+        result = b''
+        for i in range(0, len(plaintext), self.block_size):
+            block = plaintext[i:i + self.block_size]
+            result += self.encrypt_func(block, self.key)
+        return result
+    
+    def decrypt(self, ciphertext):
+        result = b''
+        for i in range(0, len(ciphertext), self.block_size):
+            block = ciphertext[i:i + self.block_size]
+            result += self.decrypt_func(block, self.key)
+        return result
+
