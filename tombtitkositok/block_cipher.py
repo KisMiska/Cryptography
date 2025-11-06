@@ -172,3 +172,74 @@ class CTRMode(BlockCipherMode):
     
     def decrypt(self, ciphertext):
         return self.encrypt(ciphertext)
+
+
+
+class Framework:
+    
+    MODES = {
+        'ECB': ECBMode,
+        'CBC': CBCMode,
+        'CFB': CFBMode,
+        'OFB': OFBMode,
+        'CTR': CTRMode
+    }
+    
+    PADDING_MODES = {
+        'zero': (PaddingMode.zero_padding, PaddingMode.remove_zero_padding),
+        'des': (PaddingMode.des_padding, PaddingMode.remove_des_padding),
+        'schneier_ferguson': (PaddingMode.schneier_ferguson_padding, PaddingMode.remove_schneier_ferguson_padding)
+    }
+    
+    def __init__(self, config):
+        self.block_size_bits = config['block_size_bits']
+        self.block_size = self.block_size_bits // 8
+        self.mode_name = config['mode']
+        self.padding_name = config['padding']
+        self.iv = config.get('iv')
+        
+        if self.block_size_bits % 8 != 0:
+            raise ValueError("Block size must be a multiple of 8 bits")    
+        
+        if self.mode_name not in self.MODES:
+            raise ValueError(f"Unknown mode: {self.mode_name}")
+        
+        if self.padding_name not in self.PADDING_MODES:
+            raise ValueError(f"Unknown padding: {self.padding_name}")
+        
+        if self.mode_name in ['CBC', 'CFB', 'OFB', 'CTR'] and not self.iv:
+            raise ValueError(f"IV is required for {self.mode_name} mode")
+        
+        self.pad_func, self.unpad_func = self.PADDING_MODES[self.padding_name]
+        
+    
+    def encrypt(self, plaintext, encrypt_func, key) :
+
+        padded_plaintext = self.pad_func(plaintext, self.block_size)
+        
+        mode_class = self.MODES[self.mode_name]
+        mode = mode_class(
+            self.block_size_bits,
+            encrypt_func,
+            None,
+            key,
+            self.iv
+        )
+        
+        return mode.encrypt(padded_plaintext)
+    
+    
+    def decrypt(self, ciphertext, decrypt_func,  encrypt_func, key):
+        mode_class = self.MODES[self.mode_name]
+        mode = mode_class(
+            self.block_size_bits,
+            encrypt_func,
+            decrypt_func,
+            key,
+            self.iv
+        )
+        
+        padded_plaintext = mode.decrypt(ciphertext)
+        
+        return self.unpad_func(padded_plaintext)
+        
