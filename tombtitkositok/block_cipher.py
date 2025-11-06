@@ -85,3 +85,90 @@ class ECBMode(BlockCipherMode):
             result += self.decrypt_func(block, self.key)
         return result
 
+
+
+class CBCMode(BlockCipherMode):
+    """Cipher Block Chaining Mode"""
+    
+    def encrypt(self, plaintext):
+        result = b''
+        prev_block = self.iv
+        for i in range(0, len(plaintext), self.block_size):
+            block = plaintext[i:i + self.block_size]
+            block = self.xor_bytes(block, prev_block)
+            encrypted_block = self.encrypt_func(block, self.key)
+            result += encrypted_block
+            prev_block = encrypted_block
+        return result
+    
+    def decrypt(self, ciphertext):
+        result = b''
+        prev_block = self.iv
+        for i in range(0, len(ciphertext), self.block_size):
+            block = ciphertext[i:i + self.block_size]
+            decrypted_block = self.decrypt_func(block, self.key)
+            result += self.xor_bytes(decrypted_block, prev_block)
+            prev_block = block
+        return result
+    
+
+class CFBMode(BlockCipherMode):
+    """Cipher Feedback Mode"""
+    
+    def encrypt(self, plaintext):
+        result = b''
+        prev_block = self.iv
+        for i in range(0, len(plaintext), self.block_size):
+            block = plaintext[i:i + self.block_size]
+            encrypted_iv = self.encrypt_func(prev_block, self.key)
+            encrypted_block = self.xor_bytes(block, encrypted_iv)
+            result += encrypted_block
+            prev_block = encrypted_block
+        return result
+    
+    def decrypt(self, ciphertext):
+        result = b''
+        prev_block = self.iv
+        for i in range(0, len(ciphertext), self.block_size):
+            block = ciphertext[i:i + self.block_size]
+            encrypted_iv = self.encrypt_func(prev_block, self.key)
+            decrypted_block = self.xor_bytes(block, encrypted_iv)
+            result += decrypted_block
+            prev_block = block
+        return result
+    
+
+class OFBMode(BlockCipherMode):
+    """Output Feedback Mode"""
+    
+    def encrypt(self, plaintext):
+        result = b''
+        feedback = self.iv
+        for i in range(0, len(plaintext), self.block_size):
+            block = plaintext[i:i + self.block_size]
+            feedback = self.encrypt_func(feedback, self.key)
+            encrypted_block = self.xor_bytes(block, feedback)
+            result += encrypted_block
+        return result
+    
+    def decrypt(self, ciphertext):
+        return self.encrypt(ciphertext)
+
+
+class CTRMode(BlockCipherMode):
+    """Counter Mode"""
+    
+    def encrypt(self, plaintext):
+        result = b''
+        counter = int.from_bytes(self.iv, byteorder='big')
+        for i in range(0, len(plaintext), self.block_size):
+            block = plaintext[i:i + self.block_size]
+            counter_bytes = counter.to_bytes(self.block_size, byteorder='big')
+            encrypted_counter = self.encrypt_func(counter_bytes, self.key)
+            encrypted_block = self.xor_bytes(block, encrypted_counter[:len(block)])
+            result += encrypted_block
+            counter += 1
+        return result
+    
+    def decrypt(self, ciphertext):
+        return self.encrypt(ciphertext)
