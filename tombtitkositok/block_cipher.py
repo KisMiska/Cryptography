@@ -28,13 +28,14 @@ class PaddingMode:
     def remove_zero_padding(data):
         return data.rstrip(b'\x00')
     
-    def remove_des_padding(data):
+    def remove_des_padding(data: bytes) -> bytes:
         for i in range(len(data) - 1, -1, -1):
-            if data[i] == b'\x80':
+            if data[i] == 0x80:
                 return data[:i]
-            elif data[i] != b'\0x00':
+            elif data[i] != 0x00:
                 return data
         return data
+
     
     def remove_schneier_ferguson_padding(data):
         if not data:

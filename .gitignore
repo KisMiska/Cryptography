@@ -218,3 +218,5 @@ __marimo__/
 words.txt
 words_alpha.txt
 *.png
+
+.vscode
