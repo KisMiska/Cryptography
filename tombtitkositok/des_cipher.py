@@ -1,6 +1,5 @@
 from Crypto.Cipher import DES as CryptoDES
 
-
 def des_block_encrypt(block, key):
 
     if len(block) != 8:
