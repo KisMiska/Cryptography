@@ -220,3 +220,6 @@ words_alpha.txt
 *.png
 
 .vscode
+
+test_configs/
+test_output/
