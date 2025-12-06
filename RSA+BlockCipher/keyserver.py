@@ -6,11 +6,6 @@ Listens on port 8000 and responds to:
 
 import socket
 import threading
-import json
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.backends import default_backend
-
 
 class KeyServer:
     
