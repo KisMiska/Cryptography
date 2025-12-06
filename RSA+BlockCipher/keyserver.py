@@ -48,7 +48,7 @@ class KeyServer:
             if not data:
                 return
             
-            parts = data.split("", 2)
+            parts = data.split(" ", 2)
             command = parts[0]
             
             if command == 'REGISTER':
