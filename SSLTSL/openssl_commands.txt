@@ -1,0 +1,21 @@
+
+Generate a private key for the fake BNR server
+openssl genrsa -out fake_bnr_private.pem 2048
+
+This creates a 2048-bit RSA private key for our fake server.
+
+Create a self-signed certificate mimicking BNR
+openssl req -new -x509 -key fake_bnr_private.pem -out fake_bnr_cert.pem -days 365 -subj "/C=RO/ST=Bucharest/L=Bucharest/O=Banca Nationala a Romaniei/CN=bnr.ro"
+
+This creates a self-signed X.509 certificate with:
+- Country: RO (Romania)
+- State: Bucharest
+- Locality: Bucharest
+- Organization: Banca Nationala a Romaniei (National Bank of Romania)
+- Common Name: bnr.ro
+
+Create a PKCS12 keystore for Java
+openssl pkcs12 -export -in fake_bnr_cert.pem -inkey fake_bnr_private.pem -out fake_bnr_keystore.p12 -name fakebnr -passout pass:supersecret123
+
+This packages the certificate and private key into a PKCS12 keystore that Java can use.
+Password: supersecret123
