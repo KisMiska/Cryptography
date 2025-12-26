@@ -1,0 +1,57 @@
+
+Generate EC private key (256-bit) for RootCA
+openssl ecparam -name prime256v1 -genkey -noout -out rootca_private.pem
+
+This creates a 256-bit Elliptic Curve private key using the prime256v1 curve.
+
+Create self-signed certificate for RootCA
+
+openssl req -new -x509 -key rootca_private.pem -out rootca_cert.pem -days 90 -subj "/C=RO/ST=Kolozs/L=Kolozsvar/O=BBTE/CN=geim2350-RootCA"
+
+This creates a self-signed X.509 certificate for the RootCA with:
+- Country: RO (Romania)
+- State/Province: Kolozs
+- Locality: Kolozsvár
+- Organization: BBTE
+- Common Name: geim2350-RootCA
+- Valid until: 2025-02-28 (90 days from creation)
+
+
+Create ClientCA (Signs client certificates)
+Generate EC private key (256-bit) for ClientCA
+
+openssl ecparam -name prime256v1 -genkey -noout -out clientca_private.pem
+
+Create Certificate Signing Request (CSR) for ClientCA
+openssl req -new -key clientca_private.pem -out clientca.csr -subj "/C=RO/ST=Kolozs/L=Kolozsvar/O=BBTE/CN=geim2350-ClientCA"
+
+This creates a Certificate Signing Request that will be signed by the RootCA.
+
+Sign ClientCA certificate with RootCA
+openssl x509 -req -in clientca.csr -CA rootca_cert.pem -CAkey rootca_private.pem -CAcreateserial -out clientca_cert.pem -days 90
+
+This signs the ClientCA certificate with the RootCA's private key, creating a certificate chain.
+
+Create ServerCA (Signs server certificates)
+Generate EC private key (256-bit) for ServerCA
+openssl ecparam -name prime256v1 -genkey -noout -out serverca_private.pem
+
+Create Certificate Signing Request (CSR) for ServerCA
+openssl req -new -key serverca_private.pem -out serverca.csr -subj "/C=RO/ST=Kolozs/L=Kolozsvar/O=BBTE/CN=geim2350-ServerCA"
+
+Sign ServerCA certificate with RootCA
+openssl x509 -req -in serverca.csr -CA rootca_cert.pem -CAkey rootca_private.pem -CAcreateserial -out serverca_cert.pem -days 90
+
+
+Verification Commands
+
+Verify the certificate chain:
+openssl verify -CAfile rootca_cert.pem clientca_cert.pem
+openssl verify -CAfile rootca_cert.pem serverca_cert.pem
+
+View certificate details:
+openssl x509 -in rootca_cert.pem -text -noout
+openssl x509 -in clientca_cert.pem -text -noout
+openssl x509 -in serverca_cert.pem -text -noout
+
+
