@@ -1,0 +1,59 @@
+
+Generate EC private key (256-bit) for Client
+openssl ecparam -name prime256v1 -genkey -noout -out client_private.pem
+
+This creates a 256-bit Elliptic Curve private key for the client.
+
+Create Certificate Signing Request (CSR) for Client
+openssl req -new -key client_private.pem -out client.csr -subj "/C=RO/ST=Kolozs/L=Kolozsvar/O=BBTE/CN=geim2350-client"
+
+This creates a Certificate Signing Request for the client.
+
+Sign Client certificate with ClientCA
+openssl x509 -req -in client.csr -CA clientca_cert.pem -CAkey clientca_private.pem -CAcreateserial -out client_cert.pem -days 90
+
+This signs the client certificate with the ClientCA's private key.
+
+Verify Client certificate chain
+cat clientca_cert.pem rootca_cert.pem > ca_chain.pem
+openssl verify -CAfile ca_chain.pem client_cert.pem
+
+This verifies that the client certificate is properly signed by ClientCA, which is signed by RootCA.
+
+
+Generate RSA private key (2048-bit) for Server
+openssl genrsa -out server_private.pem 2048
+
+This creates a 2048-bit RSA private key for the server.
+
+Create Certificate Signing Request (CSR) for Server
+openssl req -new -key server_private.pem -out server.csr -subj "/C=RO/ST=Kolozs/L=Kolozsvar/O=BBTE/CN=ervin"
+
+This creates a Certificate Signing Request for the server with the hostname as CN.
+
+Sign Server certificate with ServerCA
+openssl x509 -req -in server.csr -CA serverca_cert.pem -CAkey serverca_private.pem -CAcreateserial -out server_cert.pem -days 90
+
+This signs the server certificate with the ServerCA's private key.
+
+Verify Server certificate chain
+cat serverca_cert.pem rootca_cert.pem > server_ca_chain.pem
+openssl verify -CAfile server_ca_chain.pem server_cert.pem
+
+This verifies that the server certificate is properly signed by ServerCA, which is signed by RootCA.
+
+
+Create PKCS12 keystore for Client
+openssl pkcs12 -export -in client_cert.pem -inkey client_private.pem -out client_keystore.p12 -name client -passout pass:supersecret123 -certfile ca_chain.pem
+
+This packages the client certificate, private key, and CA chain into a PKCS12 keystore.
+
+Create PKCS12 keystore for Server
+openssl pkcs12 -export -in server_cert.pem -inkey server_private.pem -out server_keystore.p12 -name server -passout pass:supersecret123 -certfile server_ca_chain.pem
+
+This packages the server certificate, private key, and CA chain into a PKCS12 keystore.
+
+Create Truststore containing RootCA
+keytool -import -alias rootca -file rootca_cert.pem -keystore truststore.jks -storepass supersecret123 -noprompt
+
+This creates a truststore containing the RootCA certificate that both client and server can use.
